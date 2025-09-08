@@ -13,6 +13,9 @@ class NeuroSyncApp {
     this.setupSmoothScrolling()
     this.setupMicroInteractions()
     this.setupParallaxEffects()
+    this.setupMatrixRain()
+    this.setupBrainWaveVisualizer()
+    this.setupCodeEffects()
   }
 
   createApp() {
@@ -50,6 +53,7 @@ class NeuroSyncApp {
   createHero() {
     return `
       <section class="hero">
+        <div class="matrix-background"></div>
         <div class="hero-content animate-fade-in">
           <h1 class="hero-title">The Future of Brain-Computer Interface</h1>
           <h2 class="hero-subtitle">NeuroSync</h2>
@@ -58,8 +62,12 @@ class NeuroSyncApp {
             Advanced AI interprets neural patterns in real-time, unlocking unprecedented 
             control and insights into human consciousness.
           </p>
+          <div class="code-snippet">
+            <code>neural_interface.connect() → consciousness.unlock()</code>
+          </div>
           <a href="#showcase" class="cta-button">
-            Discover the Technology
+            <span>Discover the Technology</span>
+            <span class="button-code">[ENTER]</span>
           </a>
         </div>
         <div class="hero-device-visual">
@@ -427,13 +435,29 @@ class NeuroSyncApp {
       // Parallax effect for hero device visual
       const heroDevice = document.querySelector('.hero-device-visual')
       if (heroDevice) {
-        heroDevice.style.transform = `translateY(${rate * 0.3}px)`
+        heroDevice.style.transform = `translateY(${rate * 0.3}px) rotateZ(${Math.sin(scrolled * 0.002) * 3}deg)`
       }
 
-      // Parallax effect for device cards
+      // Enhanced parallax effect for device cards
       document.querySelectorAll('.neural-device').forEach((device, index) => {
         const offset = (scrolled * 0.1) + (index * 10)
-        device.style.transform = `translateY(${-offset * 0.2}px) rotateZ(${Math.sin(scrolled * 0.001 + index) * 2}deg)`
+        const rotateX = Math.sin(scrolled * 0.001 + index) * 5
+        const rotateY = Math.cos(scrolled * 0.001 + index) * 5
+        const rotateZ = Math.sin(scrolled * 0.001 + index) * 2
+        device.style.transform = `translateY(${-offset * 0.2}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg)`
+      })
+
+      // Parallax for background elements
+      document.querySelectorAll('.section::before, .product-showcase::after').forEach((bg, index) => {
+        if (bg) {
+          bg.style.transform = `translateY(${scrolled * 0.05 * (index + 1)}px) scale(${1 + scrolled * 0.0001})`
+        }
+      })
+
+      // Code snippets float effect
+      document.querySelectorAll('.code-snippet').forEach((code, index) => {
+        const floatOffset = Math.sin(Date.now() * 0.001 + index) * 5
+        code.style.transform = `translateY(${floatOffset}px)`
       })
 
       ticking = false
@@ -487,6 +511,128 @@ class NeuroSyncApp {
         darkIcon.style.display = 'block'
       }
     }
+  }
+
+  setupMatrixRain() {
+    setTimeout(() => {
+      const matrixContainer = document.createElement('div')
+      matrixContainer.className = 'matrix-rain-container'
+      matrixContainer.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.3;
+      `
+      document.body.appendChild(matrixContainer)
+
+      const characters = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'
+      
+      for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+          this.createMatrixColumn(matrixContainer, characters)
+        }, i * 500)
+      }
+    }, 1000)
+  }
+
+  createMatrixColumn(container, chars) {
+    const column = document.createElement('div')
+    column.style.cssText = `
+      position: absolute;
+      top: -100px;
+      left: ${Math.random() * window.innerWidth}px;
+      font-family: var(--mono-font);
+      font-size: 14px;
+      color: var(--accent-green);
+      line-height: 1.2;
+      animation: matrixRain ${5 + Math.random() * 10}s linear infinite;
+      opacity: ${0.3 + Math.random() * 0.4};
+    `
+    
+    for (let i = 0; i < 20; i++) {
+      const char = document.createElement('div')
+      char.textContent = chars[Math.floor(Math.random() * chars.length)]
+      char.style.opacity = Math.random()
+      column.appendChild(char)
+    }
+    
+    container.appendChild(column)
+    
+    setTimeout(() => {
+      if (column.parentNode) {
+        column.parentNode.removeChild(column)
+      }
+      this.createMatrixColumn(container, chars)
+    }, 15000)
+  }
+
+  setupBrainWaveVisualizer() {
+    setTimeout(() => {
+      document.querySelectorAll('.neural-device').forEach(device => {
+        const visualizer = document.createElement('div')
+        visualizer.className = 'brain-wave-visualizer'
+        visualizer.style.cssText = `
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 80%;
+          height: 80%;
+          border-radius: 50%;
+          background: radial-gradient(circle at center, transparent 30%, rgba(0, 255, 136, 0.1) 70%);
+          animation: neuralPulse 2s ease-in-out infinite;
+          pointer-events: none;
+        `
+        device.appendChild(visualizer)
+      })
+    }, 500)
+  }
+
+  setupCodeEffects() {
+    setTimeout(() => {
+      // Add typing effect to code snippets
+      document.querySelectorAll('.code-snippet code').forEach(code => {
+        const text = code.textContent
+        code.textContent = ''
+        let i = 0
+        
+        const typeWriter = () => {
+          if (i < text.length) {
+            code.textContent += text.charAt(i)
+            i++
+            setTimeout(typeWriter, 50 + Math.random() * 50)
+          }
+        }
+        
+        setTimeout(typeWriter, 1000)
+      })
+
+      // Add glitch effect to device names
+      document.querySelectorAll('.device-name').forEach(name => {
+        name.addEventListener('mouseenter', () => {
+          const originalText = name.textContent
+          const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?'
+          let glitchText = ''
+          
+          for (let i = 0; i < originalText.length; i++) {
+            if (Math.random() < 0.3) {
+              glitchText += glitchChars[Math.floor(Math.random() * glitchChars.length)]
+            } else {
+              glitchText += originalText[i]
+            }
+          }
+          
+          name.textContent = glitchText
+          setTimeout(() => {
+            name.textContent = originalText
+          }, 100)
+        })
+      })
+    }, 1000)
   }
 }
 
