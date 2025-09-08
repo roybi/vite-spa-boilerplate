@@ -206,89 +206,64 @@ body {
   padding: 0 24px;
   position: relative;
   overflow: hidden;
-  background-image: 
-    radial-gradient(circle at 20% 80%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(0, 122, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 60% 40%, rgba(88, 86, 214, 0.08) 0%, transparent 50%);
   transition: background-color 0.3s ease;
 }
 
-.hero::before {
-  content: '';
+/* Video Background */
+.video-background {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    linear-gradient(45deg, transparent 48%, rgba(0, 255, 136, 0.02) 49%, rgba(0, 255, 136, 0.02) 51%, transparent 52%),
-    linear-gradient(-45deg, transparent 48%, rgba(0, 122, 255, 0.02) 49%, rgba(0, 122, 255, 0.02) 51%, transparent 52%);
-  background-size: 100px 100px;
-  animation: codeGrid 20s linear infinite;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.video-background iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 56.25vw; /* 16:9 aspect ratio */
+  min-height: 100vh;
+  min-width: 177.78vh; /* 16:9 aspect ratio */
+  transform: translate(-50%, -50%);
   pointer-events: none;
 }
 
-/* Brain Wave Animation Background */
-.hero::after {
-  content: '';
+.video-overlay {
   position: absolute;
-  top: 50%;
+  top: 0;
   left: 0;
-  right: 0;
-  height: 300px;
-  transform: translateY(-50%);
-  background: linear-gradient(90deg, rgba(0, 255, 136, 0.4), rgba(0, 122, 255, 0.5), rgba(88, 86, 214, 0.4));
-  clip-path: polygon(0 50%, 8% 20%, 15% 80%, 25% 10%, 35% 90%, 45% 15%, 55% 85%, 65% 25%, 75% 75%, 85% 35%, 95% 65%, 100% 50%, 100% 100%, 0 100%);
-  animation: brainWave 2.5s ease-in-out infinite;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 255, 136, 0.1) 25%,
+    rgba(0, 122, 255, 0.1) 50%,
+    rgba(88, 86, 214, 0.1) 75%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  z-index: 2;
   pointer-events: none;
-  opacity: 1;
-  filter: blur(2px);
-  box-shadow: 0 0 50px rgba(0, 255, 136, 0.3);
 }
 
 .hero-content {
   max-width: 800px;
   margin-top: 70px;
-  z-index: 2;
+  z-index: 3;
   position: relative;
 }
 
-/* Additional Brain Wave Layers */
-.hero-content::before {
-  content: '';
-  position: absolute;
-  top: -50px;
-  left: 0;
-  right: 0;
-  height: 100px;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.7), transparent);
-  clip-path: polygon(0 50%, 12% 70%, 25% 30%, 38% 85%, 50% 15%, 62% 75%, 75% 25%, 88% 65%, 100% 45%, 100% 100%, 0 100%);
-  animation: brainWave2 2s ease-in-out infinite reverse;
-  pointer-events: none;
-  z-index: -1;
-  box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
-}
-
-.hero-content::after {
-  content: '';
-  position: absolute;
-  bottom: -80px;
-  left: 0;
-  right: 0;
-  height: 120px;
-  background: linear-gradient(90deg, rgba(88, 86, 214, 0.6), rgba(0, 122, 255, 0.7), rgba(0, 255, 136, 0.6));
-  clip-path: polygon(0 50%, 20% 80%, 40% 20%, 60% 85%, 80% 35%, 100% 70%, 100% 100%, 0 100%);
-  animation: brainWave3 3.5s ease-in-out infinite;
-  pointer-events: none;
-  z-index: -1;
-  box-shadow: 0 0 40px rgba(0, 122, 255, 0.4);
-}
 
 .hero-device-visual {
   position: absolute;
   bottom: 10%;
   right: 10%;
   opacity: 0.3;
+  z-index: 3;
 }
 
 .device-mockup {

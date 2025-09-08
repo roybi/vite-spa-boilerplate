@@ -53,7 +53,16 @@ class NeuroSyncApp {
   createHero() {
     return `
       <section class="hero">
-        <div class="matrix-background"></div>
+        <div class="video-background">
+          <iframe 
+            id="hero-video" 
+            src="https://www.youtube.com/embed/5fpGTE3aIw0?autoplay=1&mute=1&loop=1&playlist=5fpGTE3aIw0&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1" 
+            frameborder="0" 
+            allow="autoplay; encrypted-media" 
+            allowfullscreen>
+          </iframe>
+          <div class="video-overlay"></div>
+        </div>
         <div class="hero-content animate-fade-in">
           <h1 class="hero-title">The Future of Brain-Computer Interface</h1>
           <h2 class="hero-subtitle">NeuroSync</h2>
