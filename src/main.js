@@ -572,24 +572,60 @@ class NeuroSyncApp {
 
   setupBrainWaveVisualizer() {
     setTimeout(() => {
-      document.querySelectorAll('.neural-device').forEach(device => {
+      document.querySelectorAll('.neural-device').forEach((device, index) => {
+        // Main brain wave visualizer
         const visualizer = document.createElement('div')
         visualizer.className = 'brain-wave-visualizer'
-        visualizer.style.cssText = `
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 80%;
-          height: 80%;
-          border-radius: 50%;
-          background: radial-gradient(circle at center, transparent 30%, rgba(0, 255, 136, 0.1) 70%);
-          animation: neuralPulse 2s ease-in-out infinite;
-          pointer-events: none;
-        `
         device.appendChild(visualizer)
+
+        // Add multiple brain wave rings
+        for (let i = 0; i < 3; i++) {
+          const ring = document.createElement('div')
+          ring.className = 'brain-wave-ring'
+          ring.style.cssText = `
+            position: absolute;
+            top: ${10 + i * 15}%;
+            left: ${10 + i * 15}%;
+            right: ${10 + i * 15}%;
+            bottom: ${10 + i * 15}%;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 255, 136, ${0.6 - i * 0.2});
+            animation: brainWaveRing ${2 + i * 0.5}s ease-in-out infinite;
+            animation-delay: ${i * 0.3}s;
+            pointer-events: none;
+          `
+          device.appendChild(ring)
+        }
+
+        // Add brain wave particles
+        this.createBrainWaveParticles(device, index)
       })
     }, 500)
+  }
+
+  createBrainWaveParticles(container, deviceIndex) {
+    for (let i = 0; i < 6; i++) {
+      const particle = document.createElement('div')
+      particle.className = 'brain-wave-particle'
+      const angle = (i * 60) + (deviceIndex * 10) // Spread particles around circle
+      const radius = 60 + (i * 5)
+      
+      particle.style.cssText = `
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: rgba(0, 255, 136, 0.8);
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) translate(${Math.cos(angle * Math.PI / 180) * radius}px, ${Math.sin(angle * Math.PI / 180) * radius}px);
+        animation: brainWaveParticle ${3 + Math.random() * 2}s ease-in-out infinite;
+        animation-delay: ${i * 0.2}s;
+        box-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+        pointer-events: none;
+      `
+      container.appendChild(particle)
+    }
   }
 
   setupCodeEffects() {
