@@ -17,6 +17,8 @@ class NeuroSyncApp {
     this.setupBrainWaveVisualizer()
     this.setupCodeEffects()
     this.setupLottieAnimation()
+    this.setupQAAccordion()
+    this.setupWaitlistForm()
   }
 
   createApp() {
@@ -27,6 +29,8 @@ class NeuroSyncApp {
       ${this.createProductGallery()}
       ${this.createFeatures()}
       ${this.createTechSpecs()}
+      ${this.createQA()}
+      ${this.createWaitlist()}
       ${this.createFooter()}
     `
   }
@@ -40,6 +44,8 @@ class NeuroSyncApp {
             <li><a href="#features" class="nav-link">Features</a></li>
             <li><a href="#technology" class="nav-link">Technology</a></li>
             <li><a href="#specs" class="nav-link">Specifications</a></li>
+            <li><a href="#qa" class="nav-link">FAQ</a></li>
+            <li><a href="#waitlist" class="nav-link">Waitlist</a></li>
             <li><a href="#contact" class="nav-link">Contact</a></li>
           </ul>
           <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
@@ -324,6 +330,118 @@ class NeuroSyncApp {
                 <div class="spec-value">${spec.value}</div>
               </div>
             `).join('')}
+          </div>
+        </div>
+      </section>
+    `
+  }
+
+  createQA() {
+    const qaItems = [
+      {
+        question: 'Is the NeuroSync device safe to use?',
+        answer: 'Yes, NeuroSync uses non-invasive EEG technology that only reads brain signals from the surface of your scalp. It\'s completely safe and FDA-approved for consumer use.'
+      },
+      {
+        question: 'How accurate is the brain wave interpretation?',
+        answer: 'Our AI achieves 99.7% accuracy in neural pattern recognition after a brief calibration period. The system continuously learns and adapts to your unique brain patterns.'
+      },
+      {
+        question: 'What applications can I control with NeuroSync?',
+        answer: 'NeuroSync integrates with computers, smart home devices, gaming systems, and mobile apps. Control cursors, type text, play games, or command IoT devices with your thoughts.'
+      },
+      {
+        question: 'How long does the battery last?',
+        answer: 'The NeuroSync device provides 24+ hours of continuous use on a single charge, with fast charging capability that reaches 80% capacity in just 30 minutes.'
+      },
+      {
+        question: 'Do I need any special training to use it?',
+        answer: 'No special training required. The device includes an intuitive setup process and guided tutorials. Most users are controlling their first application within 10 minutes.'
+      },
+      {
+        question: 'What about data privacy and security?',
+        answer: 'All neural data is processed locally on your device with end-to-end encryption. Your brain data never leaves your device unless you explicitly choose to share it.'
+      }
+    ]
+
+    return `
+      <section class="qa-section" id="qa">
+        <div class="section">
+          <div class="scroll-fade">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">
+              Everything you need to know about NeuroSync brain-computer interface
+            </p>
+          </div>
+          <div class="qa-container">
+            ${qaItems.map((item, index) => `
+              <div class="qa-item scroll-fade" data-index="${index}">
+                <div class="qa-question">
+                  <h3>${item.question}</h3>
+                  <div class="qa-toggle">+</div>
+                </div>
+                <div class="qa-answer">
+                  <p>${item.answer}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </section>
+    `
+  }
+
+  createWaitlist() {
+    return `
+      <section class="waitlist-section" id="waitlist">
+        <div class="section">
+          <div class="waitlist-container scroll-fade">
+            <div class="waitlist-content">
+              <h2 class="section-title">Join the Future</h2>
+              <p class="section-subtitle">
+                Be among the first to experience the revolutionary NeuroSync technology. 
+                Get exclusive early access and special pricing.
+              </p>
+              <div class="waitlist-benefits">
+                <div class="benefit-item">
+                  <span class="benefit-icon">🚀</span>
+                  <span>Early Access</span>
+                </div>
+                <div class="benefit-item">
+                  <span class="benefit-icon">💰</span>
+                  <span>Special Pricing</span>
+                </div>
+                <div class="benefit-item">
+                  <span class="benefit-icon">🎁</span>
+                  <span>Exclusive Updates</span>
+                </div>
+              </div>
+            </div>
+            <div class="waitlist-form-container">
+              <form class="waitlist-form" id="waitlistForm">
+                <div class="form-group">
+                  <input 
+                    type="email" 
+                    id="waitlistEmail" 
+                    placeholder="Enter your email address" 
+                    required
+                    class="email-input"
+                  >
+                  <button type="submit" class="waitlist-button">
+                    <span class="button-text">Join Waitlist</span>
+                    <span class="button-code">[SUBMIT]</span>
+                  </button>
+                </div>
+                <p class="form-note">
+                  No spam, ever. Unsubscribe anytime. Your email is safe with us.
+                </p>
+              </form>
+              <div class="success-message" id="successMessage">
+                <div class="success-icon">✅</div>
+                <h3>Successfully Signed Up!</h3>
+                <p>Welcome to the future of brain-computer interfaces. You're now on the NeuroSync waitlist and will receive exclusive updates about our revolutionary technology.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -712,6 +830,134 @@ class NeuroSyncApp {
         </div>
       </div>
     `
+  }
+
+  setupQAAccordion() {
+    setTimeout(() => {
+      document.querySelectorAll('.qa-item').forEach(item => {
+        const question = item.querySelector('.qa-question')
+        const answer = item.querySelector('.qa-answer')
+        const toggle = item.querySelector('.qa-toggle')
+        
+        question.addEventListener('click', () => {
+          const isOpen = item.classList.contains('open')
+          
+          // Close all other items
+          document.querySelectorAll('.qa-item').forEach(otherItem => {
+            if (otherItem !== item) {
+              otherItem.classList.remove('open')
+              otherItem.querySelector('.qa-toggle').textContent = '+'
+            }
+          })
+          
+          // Toggle current item
+          if (isOpen) {
+            item.classList.remove('open')
+            toggle.textContent = '+'
+          } else {
+            item.classList.add('open')
+            toggle.textContent = '−'
+          }
+        })
+      })
+    }, 500)
+  }
+
+  setupWaitlistForm() {
+    setTimeout(() => {
+      const form = document.getElementById('waitlistForm')
+      const successMessage = document.getElementById('successMessage')
+      const emailInput = document.getElementById('waitlistEmail')
+      
+      if (form && successMessage && emailInput) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault()
+          
+          const email = emailInput.value.trim()
+          if (this.isValidEmail(email)) {
+            // Simulate form submission with mock data
+            this.simulateWaitlistSignup(email)
+            
+            // Show success message
+            form.style.display = 'none'
+            successMessage.style.display = 'block'
+            
+            // Add celebration effect
+            this.triggerCelebrationEffect()
+          }
+        })
+      }
+    }, 500)
+  }
+
+  isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  simulateWaitlistSignup(email) {
+    // Mock API call simulation
+    console.log('Mock waitlist signup:', {
+      email: email,
+      timestamp: new Date().toISOString(),
+      status: 'success',
+      waitlistPosition: Math.floor(Math.random() * 1000) + 1
+    })
+    
+    // Store in localStorage as mock data
+    const waitlistData = {
+      email: email,
+      signupDate: new Date().toISOString(),
+      waitlistPosition: Math.floor(Math.random() * 1000) + 1
+    }
+    localStorage.setItem('neurosync-waitlist', JSON.stringify(waitlistData))
+  }
+
+  triggerCelebrationEffect() {
+    // Create floating particles effect
+    const particleContainer = document.createElement('div')
+    particleContainer.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    `
+    document.body.appendChild(particleContainer)
+    
+    // Create celebration particles
+    for (let i = 0; i < 20; i++) {
+      setTimeout(() => {
+        this.createCelebrationParticle(particleContainer)
+      }, i * 100)
+    }
+    
+    // Remove particle container after animation
+    setTimeout(() => {
+      if (particleContainer.parentNode) {
+        particleContainer.parentNode.removeChild(particleContainer)
+      }
+    }, 3000)
+  }
+
+  createCelebrationParticle(container) {
+    const particle = document.createElement('div')
+    const symbols = ['🎉', '🚀', '⭐', '✨', '🧠', '💫']
+    const symbol = symbols[Math.floor(Math.random() * symbols.length)]
+    
+    particle.textContent = symbol
+    particle.style.cssText = `
+      position: absolute;
+      font-size: ${20 + Math.random() * 20}px;
+      left: ${Math.random() * window.innerWidth}px;
+      top: ${window.innerHeight + 50}px;
+      animation: celebrationFloat ${2 + Math.random() * 3}s ease-out forwards;
+      pointer-events: none;
+    `
+    
+    container.appendChild(particle)
   }
 }
 
