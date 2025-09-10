@@ -183,12 +183,15 @@ class NeuroSyncApp {
             </div>
             <div class="gallery-item scroll-fade">
               <div class="gallery-image">
-                <div class="device-detail profile-view">
-                  <div class="device-profile">
-                    <div class="profile-line"></div>
-                    <div class="profile-curve"></div>
-                    <div class="profile-base"></div>
-                  </div>
+                <div class="device-detail lottie-view">
+                  <lottie-player
+                    src="https://lottie.host/5661a82d-97ae-4f9a-9710-05c12f5553fe/oxcQXdOHjN.lottie"
+                    background="transparent"
+                    speed="1"
+                    style="width: 100%; height: 200px;"
+                    loop
+                    autoplay>
+                  </lottie-player>
                 </div>
               </div>
               <div class="gallery-info">
