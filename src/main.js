@@ -1,4 +1,5 @@
 import './style.css'
+import './admin.css'
 
 // NeuroSync Brain Wave Device Application
 class NeuroSyncApp {
@@ -19,6 +20,8 @@ class NeuroSyncApp {
     this.setupLottieAnimation()
     this.setupQAAccordion()
     this.setupWaitlistForm()
+    this.setupUserManagement()
+    this.initializeMockUsers()
   }
 
   createApp() {
@@ -33,6 +36,7 @@ class NeuroSyncApp {
         ${this.createTechSpecs()}
         ${this.createQA()}
         ${this.createWaitlist()}
+        ${this.createAdminPanel()}
       </main>
       ${this.createFooter()}
     `
@@ -49,6 +53,7 @@ class NeuroSyncApp {
             <li><a href="#specs" class="nav-link">Specifications</a></li>
             <li><a href="#qa" class="nav-link">FAQ</a></li>
             <li><a href="#waitlist" class="nav-link">Waitlist</a></li>
+            <li><a href="#admin" class="nav-link admin-link">Admin</a></li>
             <li><a href="#contact" class="nav-link">Contact</a></li>
           </ul>
           <button class="theme-toggle" id="themeToggle" aria-label="Toggle between light and dark theme">
@@ -975,7 +980,479 @@ class NeuroSyncApp {
     
     container.appendChild(particle)
   }
+
+  createAdminPanel() {
+    return `
+      <section class="admin-section" id="admin">
+        <div class="section">
+          <div class="scroll-fade">
+            <h2 class="section-title">User Management</h2>
+            <p class="section-subtitle">
+              Manage NeuroSync users and control access permissions
+            </p>
+          </div>
+          <div class="admin-panel scroll-fade">
+            <div class="admin-controls">
+              <div class="search-bar">
+                <input type="text" id="userSearch" placeholder="Search users by name or email..." class="search-input">
+                <button id="addUserBtn" class="add-user-btn">Add New User</button>
+              </div>
+              <div class="filter-controls">
+                <select id="statusFilter" class="status-filter">
+                  <option value="all">All Users</option>
+                  <option value="active">Active Only</option>
+                  <option value="disabled">Disabled Only</option>
+                </select>
+                <div class="bulk-actions">
+                  <button id="enableSelectedBtn" class="bulk-btn enable-btn" disabled>Enable Selected</button>
+                  <button id="disableSelectedBtn" class="bulk-btn disable-btn" disabled>Disable Selected</button>
+                </div>
+              </div>
+            </div>
+            <div class="users-table-container">
+              <table class="users-table">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="selectAllUsers"></th>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Last Active</th>
+                    <th>Device Access</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                  <!-- Users will be populated here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- User Modal -->
+      <div class="modal-overlay" id="userModal" style="display: none;">
+        <div class="modal">
+          <div class="modal-header">
+            <h3 id="modalTitle">Add New User</h3>
+            <button class="modal-close" id="closeModal">×</button>
+          </div>
+          <div class="modal-body">
+            <form id="userForm">
+              <div class="form-group">
+                <label for="userName">Full Name</label>
+                <input type="text" id="userName" required>
+              </div>
+              <div class="form-group">
+                <label for="userEmail">Email</label>
+                <input type="email" id="userEmail" required>
+              </div>
+              <div class="form-group">
+                <label for="userRole">Role</label>
+                <select id="userRole">
+                  <option value="user">User</option>
+                  <option value="researcher">Researcher</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="deviceModel">Device Model</label>
+                <select id="deviceModel">
+                  <option value="lite">NeuroSync Lite</option>
+                  <option value="pro">NeuroSync Pro</option>
+                  <option value="research">NeuroSync Research</option>
+                </select>
+              </div>
+              <div class="form-group checkbox-group">
+                <label>
+                  <input type="checkbox" id="userActive" checked>
+                  <span>Active User</span>
+                </label>
+              </div>
+              <div class="form-actions">
+                <button type="button" id="cancelBtn" class="cancel-btn">Cancel</button>
+                <button type="submit" class="submit-btn">Save User</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    `
+  }
+
+  setupUserManagement() {
+    setTimeout(() => {
+      this.bindUserManagementEvents()
+      this.renderUsersTable()
+    }, 500)
+  }
+
+  initializeMockUsers() {
+    if (!localStorage.getItem('neurosync-users')) {
+      const mockUsers = [
+        {
+          id: 1,
+          name: 'Dr. Sarah Chen',
+          email: 'sarah.chen@neuroscience.edu',
+          role: 'researcher',
+          status: 'active',
+          lastActive: '2024-01-10',
+          deviceModel: 'research',
+          joinDate: '2023-08-15'
+        },
+        {
+          id: 2,
+          name: 'Michael Rodriguez',
+          email: 'michael.r@techcorp.com',
+          role: 'user',
+          status: 'active',
+          lastActive: '2024-01-09',
+          deviceModel: 'pro',
+          joinDate: '2023-09-22'
+        },
+        {
+          id: 3,
+          name: 'Dr. Emily Watson',
+          email: 'emily.watson@brainlab.org',
+          role: 'researcher',
+          status: 'disabled',
+          lastActive: '2023-12-28',
+          deviceModel: 'research',
+          joinDate: '2023-07-03'
+        },
+        {
+          id: 4,
+          name: 'Alex Kim',
+          email: 'alex.kim@gmail.com',
+          role: 'user',
+          status: 'active',
+          lastActive: '2024-01-08',
+          deviceModel: 'lite',
+          joinDate: '2023-11-10'
+        },
+        {
+          id: 5,
+          name: 'Prof. James Wilson',
+          email: 'j.wilson@university.edu',
+          role: 'admin',
+          status: 'active',
+          lastActive: '2024-01-10',
+          deviceModel: 'research',
+          joinDate: '2023-06-01'
+        }
+      ]
+      localStorage.setItem('neurosync-users', JSON.stringify(mockUsers))
+    }
+  }
+
+  getUsers() {
+    return JSON.parse(localStorage.getItem('neurosync-users') || '[]')
+  }
+
+  saveUsers(users) {
+    localStorage.setItem('neurosync-users', JSON.stringify(users))
+  }
+
+  bindUserManagementEvents() {
+    const searchInput = document.getElementById('userSearch')
+    const statusFilter = document.getElementById('statusFilter')
+    const addUserBtn = document.getElementById('addUserBtn')
+    const selectAllUsers = document.getElementById('selectAllUsers')
+    const enableSelectedBtn = document.getElementById('enableSelectedBtn')
+    const disableSelectedBtn = document.getElementById('disableSelectedBtn')
+    const userModal = document.getElementById('userModal')
+    const closeModal = document.getElementById('closeModal')
+    const cancelBtn = document.getElementById('cancelBtn')
+    const userForm = document.getElementById('userForm')
+
+    if (searchInput) {
+      searchInput.addEventListener('input', () => this.renderUsersTable())
+    }
+
+    if (statusFilter) {
+      statusFilter.addEventListener('change', () => this.renderUsersTable())
+    }
+
+    if (addUserBtn) {
+      addUserBtn.addEventListener('click', () => this.openUserModal())
+    }
+
+    if (selectAllUsers) {
+      selectAllUsers.addEventListener('change', (e) => {
+        const checkboxes = document.querySelectorAll('.user-checkbox')
+        checkboxes.forEach(cb => cb.checked = e.target.checked)
+        this.updateBulkActionButtons()
+      })
+    }
+
+    if (enableSelectedBtn) {
+      enableSelectedBtn.addEventListener('click', () => this.bulkUpdateUsers('active'))
+    }
+
+    if (disableSelectedBtn) {
+      disableSelectedBtn.addEventListener('click', () => this.bulkUpdateUsers('disabled'))
+    }
+
+    if (closeModal) {
+      closeModal.addEventListener('click', () => this.closeUserModal())
+    }
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => this.closeUserModal())
+    }
+
+    if (userModal) {
+      userModal.addEventListener('click', (e) => {
+        if (e.target === userModal) this.closeUserModal()
+      })
+    }
+
+    if (userForm) {
+      userForm.addEventListener('submit', (e) => this.handleUserFormSubmit(e))
+    }
+  }
+
+  renderUsersTable() {
+    const tbody = document.getElementById('usersTableBody')
+    if (!tbody) return
+
+    const users = this.getUsers()
+    const searchTerm = document.getElementById('userSearch')?.value.toLowerCase() || ''
+    const statusFilter = document.getElementById('statusFilter')?.value || 'all'
+
+    const filteredUsers = users.filter(user => {
+      const matchesSearch = user.name.toLowerCase().includes(searchTerm) || 
+                          user.email.toLowerCase().includes(searchTerm)
+      const matchesStatus = statusFilter === 'all' || user.status === statusFilter
+      return matchesSearch && matchesStatus
+    })
+
+    tbody.innerHTML = filteredUsers.map(user => `
+      <tr class="user-row ${user.status === 'disabled' ? 'disabled-user' : ''}">
+        <td><input type="checkbox" class="user-checkbox" data-user-id="${user.id}"></td>
+        <td class="user-info">
+          <div class="user-avatar">${user.name.charAt(0).toUpperCase()}</div>
+          <div class="user-details">
+            <div class="user-name">${user.name}</div>
+            <div class="user-role">${user.role}</div>
+          </div>
+        </td>
+        <td>${user.email}</td>
+        <td>
+          <span class="status-badge ${user.status}">
+            ${user.status === 'active' ? '✅' : '❌'} ${user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+          </span>
+        </td>
+        <td>${this.formatDate(user.lastActive)}</td>
+        <td>
+          <span class="device-badge ${user.deviceModel}">
+            ${this.getDeviceName(user.deviceModel)}
+          </span>
+        </td>
+        <td class="actions">
+          <button class="action-btn edit-btn" onclick="app.editUser(${user.id})" title="Edit User">
+            ✏️
+          </button>
+          <button class="action-btn toggle-btn ${user.status === 'active' ? 'disable' : 'enable'}" 
+                  onclick="app.toggleUserStatus(${user.id})" 
+                  title="${user.status === 'active' ? 'Disable' : 'Enable'} User">
+            ${user.status === 'active' ? '🚫' : '✅'}
+          </button>
+          <button class="action-btn delete-btn" onclick="app.deleteUser(${user.id})" title="Delete User">
+            🗑️
+          </button>
+        </td>
+      </tr>
+    `).join('')
+
+    document.querySelectorAll('.user-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', () => this.updateBulkActionButtons())
+    })
+  }
+
+  updateBulkActionButtons() {
+    const selectedCheckboxes = document.querySelectorAll('.user-checkbox:checked')
+    const enableBtn = document.getElementById('enableSelectedBtn')
+    const disableBtn = document.getElementById('disableSelectedBtn')
+    
+    const hasSelection = selectedCheckboxes.length > 0
+    
+    if (enableBtn) enableBtn.disabled = !hasSelection
+    if (disableBtn) disableBtn.disabled = !hasSelection
+  }
+
+  openUserModal(userId = null) {
+    const modal = document.getElementById('userModal')
+    const modalTitle = document.getElementById('modalTitle')
+    const form = document.getElementById('userForm')
+    
+    if (userId) {
+      const user = this.getUsers().find(u => u.id === userId)
+      if (user) {
+        modalTitle.textContent = 'Edit User'
+        document.getElementById('userName').value = user.name
+        document.getElementById('userEmail').value = user.email
+        document.getElementById('userRole').value = user.role
+        document.getElementById('deviceModel').value = user.deviceModel
+        document.getElementById('userActive').checked = user.status === 'active'
+        form.dataset.userId = userId
+      }
+    } else {
+      modalTitle.textContent = 'Add New User'
+      form.reset()
+      delete form.dataset.userId
+    }
+    
+    modal.style.display = 'flex'
+  }
+
+  closeUserModal() {
+    const modal = document.getElementById('userModal')
+    modal.style.display = 'none'
+  }
+
+  handleUserFormSubmit(e) {
+    e.preventDefault()
+    
+    const form = e.target
+    const userId = form.dataset.userId
+    const users = this.getUsers()
+    
+    const userData = {
+      name: document.getElementById('userName').value,
+      email: document.getElementById('userEmail').value,
+      role: document.getElementById('userRole').value,
+      deviceModel: document.getElementById('deviceModel').value,
+      status: document.getElementById('userActive').checked ? 'active' : 'disabled',
+      lastActive: new Date().toISOString().split('T')[0]
+    }
+    
+    if (userId) {
+      const userIndex = users.findIndex(u => u.id === parseInt(userId))
+      if (userIndex !== -1) {
+        users[userIndex] = { ...users[userIndex], ...userData }
+      }
+    } else {
+      const newUser = {
+        id: Math.max(...users.map(u => u.id), 0) + 1,
+        ...userData,
+        joinDate: new Date().toISOString().split('T')[0]
+      }
+      users.push(newUser)
+    }
+    
+    this.saveUsers(users)
+    this.renderUsersTable()
+    this.closeUserModal()
+    
+    this.showNotification(userId ? 'User updated successfully' : 'User added successfully')
+  }
+
+  editUser(userId) {
+    this.openUserModal(userId)
+  }
+
+  toggleUserStatus(userId) {
+    const users = this.getUsers()
+    const userIndex = users.findIndex(u => u.id === userId)
+    
+    if (userIndex !== -1) {
+      const user = users[userIndex]
+      user.status = user.status === 'active' ? 'disabled' : 'active'
+      this.saveUsers(users)
+      this.renderUsersTable()
+      
+      const action = user.status === 'active' ? 'enabled' : 'disabled'
+      this.showNotification(`User ${user.name} has been ${action}`)
+    }
+  }
+
+  deleteUser(userId) {
+    if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      const users = this.getUsers()
+      const userIndex = users.findIndex(u => u.id === userId)
+      
+      if (userIndex !== -1) {
+        const userName = users[userIndex].name
+        users.splice(userIndex, 1)
+        this.saveUsers(users)
+        this.renderUsersTable()
+        
+        this.showNotification(`User ${userName} has been deleted`)
+      }
+    }
+  }
+
+  bulkUpdateUsers(newStatus) {
+    const selectedCheckboxes = document.querySelectorAll('.user-checkbox:checked')
+    const users = this.getUsers()
+    
+    selectedCheckboxes.forEach(checkbox => {
+      const userId = parseInt(checkbox.dataset.userId)
+      const userIndex = users.findIndex(u => u.id === userId)
+      if (userIndex !== -1) {
+        users[userIndex].status = newStatus
+      }
+    })
+    
+    this.saveUsers(users)
+    this.renderUsersTable()
+    
+    const action = newStatus === 'active' ? 'enabled' : 'disabled'
+    this.showNotification(`${selectedCheckboxes.length} users have been ${action}`)
+    
+    document.getElementById('selectAllUsers').checked = false
+    this.updateBulkActionButtons()
+  }
+
+  formatDate(dateString) {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    })
+  }
+
+  getDeviceName(deviceModel) {
+    const deviceNames = {
+      'lite': 'NeuroSync Lite',
+      'pro': 'NeuroSync Pro',
+      'research': 'NeuroSync Research'
+    }
+    return deviceNames[deviceModel] || deviceModel
+  }
+
+  showNotification(message) {
+    const notification = document.createElement('div')
+    notification.className = 'notification'
+    notification.textContent = message
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--accent-green);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      z-index: 10000;
+      animation: slideInRight 0.3s ease-out;
+    `
+    
+    document.body.appendChild(notification)
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOutRight 0.3s ease-out forwards'
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification)
+        }
+      }, 300)
+    }, 3000)
+  }
 }
 
 // Initialize the app
-new NeuroSyncApp()
+app = new NeuroSyncApp()
