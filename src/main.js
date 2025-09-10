@@ -23,14 +23,17 @@ class NeuroSyncApp {
 
   createApp() {
     document.querySelector('#app').innerHTML = `
+      <a href="#main" class="skip-link">Skip to main content</a>
       ${this.createNavigation()}
-      ${this.createHero()}
-      ${this.createProductShowcase()}
-      ${this.createProductGallery()}
-      ${this.createFeatures()}
-      ${this.createTechSpecs()}
-      ${this.createQA()}
-      ${this.createWaitlist()}
+      <main id="main">
+        ${this.createHero()}
+        ${this.createProductShowcase()}
+        ${this.createProductGallery()}
+        ${this.createFeatures()}
+        ${this.createTechSpecs()}
+        ${this.createQA()}
+        ${this.createWaitlist()}
+      </main>
       ${this.createFooter()}
     `
   }
@@ -48,9 +51,9 @@ class NeuroSyncApp {
             <li><a href="#waitlist" class="nav-link">Waitlist</a></li>
             <li><a href="#contact" class="nav-link">Contact</a></li>
           </ul>
-          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-            <span class="theme-icon light-icon">☀️</span>
-            <span class="theme-icon dark-icon">🌙</span>
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle between light and dark theme">
+            <span class="theme-icon light-icon" aria-hidden="true">☀️</span>
+            <span class="theme-icon dark-icon" aria-hidden="true">🌙</span>
           </button>
         </div>
       </nav>
@@ -376,11 +379,11 @@ class NeuroSyncApp {
           <div class="qa-container">
             ${qaItems.map((item, index) => `
               <div class="qa-item scroll-fade" data-index="${index}">
-                <div class="qa-question">
+                <button class="qa-question" aria-expanded="false" aria-controls="answer-${index}">
                   <h3>${item.question}</h3>
-                  <div class="qa-toggle">+</div>
-                </div>
-                <div class="qa-answer">
+                  <div class="qa-toggle" aria-hidden="true">+</div>
+                </button>
+                <div class="qa-answer" id="answer-${index}">
                   <p>${item.answer}</p>
                 </div>
               </div>
@@ -846,7 +849,10 @@ class NeuroSyncApp {
           document.querySelectorAll('.qa-item').forEach(otherItem => {
             if (otherItem !== item) {
               otherItem.classList.remove('open')
-              otherItem.querySelector('.qa-toggle').textContent = '+'
+              const otherToggle = otherItem.querySelector('.qa-toggle')
+              const otherQuestion = otherItem.querySelector('.qa-question')
+              otherToggle.textContent = '+'
+              otherQuestion.setAttribute('aria-expanded', 'false')
             }
           })
           
@@ -854,9 +860,19 @@ class NeuroSyncApp {
           if (isOpen) {
             item.classList.remove('open')
             toggle.textContent = '+'
+            question.setAttribute('aria-expanded', 'false')
           } else {
             item.classList.add('open')
             toggle.textContent = '−'
+            question.setAttribute('aria-expanded', 'true')
+          }
+        })
+
+        // Add keyboard support for Enter and Space keys
+        question.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            question.click()
           }
         })
       })
