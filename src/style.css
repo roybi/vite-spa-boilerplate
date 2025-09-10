@@ -47,9 +47,9 @@
   --border-primary: rgba(255, 255, 255, 0.1);
   --border-secondary: rgba(255, 255, 255, 0.06);
   
-  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-bg: rgba(255, 255, 255, 0.08);
   --card-bg-alt: #2c2c2e;
-  --card-border: rgba(0, 0, 0, 0.1);
+  --card-border: rgba(255, 255, 255, 0.1);
 }
 
 /* Light Theme Variables */
