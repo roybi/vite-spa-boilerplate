@@ -193,7 +193,7 @@ class NeuroSyncApp {
                 <div class="device-detail lottie-view">
                   <lottie-player
                     id="ergonomic-animation"
-                    src="https://lottie.host/5661a82d-97ae-4f9a-9710-05c12f5553fe/oxcQXdOHjN.lottie"
+                    src="./animation/working brain.lottie"
                     background="transparent"
                     speed="1"
                     style="width: 100%; height: 100%; max-width: 300px; max-height: 200px;"
