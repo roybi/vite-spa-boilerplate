@@ -35,8 +35,8 @@
   --bg-hero-gradient: linear-gradient(180deg, #000000 0%, #f5f5f7 100%);
   --bg-showcase: #f5f5f7;
   --bg-gallery: #1d1d1f;
-  --bg-features: #f5f5f7;
-  --bg-specs: #ffffff;
+  --bg-features: #000000;
+  --bg-specs: #1d1d1f;
   --bg-footer: #f5f5f7;
   
   --text-primary: rgba(255, 255, 255, 0.87);
