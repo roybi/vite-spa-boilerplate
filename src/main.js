@@ -16,6 +16,7 @@ class NeuroSyncApp {
     this.setupMatrixRain()
     this.setupBrainWaveVisualizer()
     this.setupCodeEffects()
+    this.setupLottieAnimation()
   }
 
   createApp() {
@@ -185,12 +186,15 @@ class NeuroSyncApp {
               <div class="gallery-image">
                 <div class="device-detail lottie-view">
                   <lottie-player
+                    id="ergonomic-animation"
                     src="https://lottie.host/5661a82d-97ae-4f9a-9710-05c12f5553fe/oxcQXdOHjN.lottie"
                     background="transparent"
                     speed="1"
-                    style="width: 100%; height: 200px;"
+                    style="width: 100%; height: 100%; max-width: 300px; max-height: 200px;"
                     loop
-                    autoplay>
+                    autoplay
+                    mode="normal"
+                    controls="false">
                   </lottie-player>
                 </div>
               </div>
@@ -681,6 +685,33 @@ class NeuroSyncApp {
         })
       })
     }, 1000)
+  }
+
+  setupLottieAnimation() {
+    setTimeout(() => {
+      const lottiePlayer = document.getElementById('ergonomic-animation')
+      if (lottiePlayer) {
+        lottiePlayer.addEventListener('ready', () => {
+          console.log('Lottie animation loaded successfully')
+        })
+        
+        lottiePlayer.addEventListener('error', (e) => {
+          console.error('Lottie animation failed to load:', e)
+          // Fallback: create a simple CSS animation
+          this.createFallbackAnimation(lottiePlayer.parentElement)
+        })
+      }
+    }, 2000)
+  }
+
+  createFallbackAnimation(container) {
+    container.innerHTML = `
+      <div class="fallback-animation">
+        <div class="brain-outline">
+          <div class="comfort-indicator"></div>
+        </div>
+      </div>
+    `
   }
 }
 
