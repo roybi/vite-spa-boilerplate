@@ -1,5 +1,6 @@
 import './style.css'
 import './admin.css'
+import './accessibility.css'
 
 // NeuroSync Brain Wave Device Application
 class NeuroSyncApp {
@@ -22,6 +23,8 @@ class NeuroSyncApp {
     this.setupWaitlistForm()
     this.setupUserManagement()
     this.initializeMockUsers()
+    this.setupAccessibilityFeatures()
+    this.initializeAccessibilitySettings()
   }
 
   createApp() {
@@ -39,6 +42,7 @@ class NeuroSyncApp {
         ${this.createAdminPanel()}
       </main>
       ${this.createFooter()}
+      ${this.createAccessibilityToolbar()}
     `
   }
 
@@ -56,6 +60,9 @@ class NeuroSyncApp {
             <li><a href="#admin" class="nav-link admin-link">Admin</a></li>
             <li><a href="#contact" class="nav-link">Contact</a></li>
           </ul>
+          <button class="accessibility-toggle" id="accessibilityToggle" aria-label="Open accessibility menu" title="Accessibility Menu">
+            <span aria-hidden="true">♿</span>
+          </button>
           <button class="theme-toggle" id="themeToggle" aria-label="Toggle between light and dark theme">
             <span class="theme-icon light-icon" aria-hidden="true">☀️</span>
             <span class="theme-icon dark-icon" aria-hidden="true">🌙</span>
@@ -1451,6 +1458,542 @@ class NeuroSyncApp {
         }
       }, 300)
     }, 3000)
+  }
+
+  createAccessibilityToolbar() {
+    return `
+      <!-- Accessibility Toolbar -->
+      <div class="accessibility-toolbar" id="accessibilityToolbar" style="display: none;">
+        <div class="accessibility-header">
+          <h3>Accessibility Settings</h3>
+          <button class="close-accessibility" id="closeAccessibility" aria-label="Close accessibility menu">×</button>
+        </div>
+        
+        <div class="accessibility-content">
+          <div class="accessibility-section">
+            <h4>Text Size</h4>
+            <div class="accessibility-controls">
+              <button class="accessibility-btn" id="decreaseText" aria-label="Decrease text size">A-</button>
+              <button class="accessibility-btn" id="resetText" aria-label="Reset text size">A</button>
+              <button class="accessibility-btn" id="increaseText" aria-label="Increase text size">A+</button>
+            </div>
+            <span class="current-size" id="currentTextSize">100%</span>
+          </div>
+
+          <div class="accessibility-section">
+            <h4>Visual Adjustments</h4>
+            <div class="accessibility-controls">
+              <button class="accessibility-btn toggle-btn" id="highContrast" aria-pressed="false" aria-label="Toggle high contrast mode">
+                <span class="btn-icon">🎭</span>
+                <span class="btn-text">High Contrast</span>
+              </button>
+              <button class="accessibility-btn toggle-btn" id="largerCursor" aria-pressed="false" aria-label="Toggle larger cursor">
+                <span class="btn-icon">🖱️</span>
+                <span class="btn-text">Big Cursor</span>
+              </button>
+              <button class="accessibility-btn toggle-btn" id="reduceMotion" aria-pressed="false" aria-label="Toggle reduced motion">
+                <span class="btn-icon">🎪</span>
+                <span class="btn-text">Reduce Motion</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="accessibility-section">
+            <h4>Navigation</h4>
+            <div class="accessibility-controls">
+              <button class="accessibility-btn toggle-btn" id="keyboardNavigation" aria-pressed="false" aria-label="Toggle keyboard navigation highlights">
+                <span class="btn-icon">⌨️</span>
+                <span class="btn-text">Keyboard Nav</span>
+              </button>
+              <button class="accessibility-btn toggle-btn" id="skipLinks" aria-pressed="false" aria-label="Toggle skip links">
+                <span class="btn-icon">🔗</span>
+                <span class="btn-text">Skip Links</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="accessibility-section">
+            <h4>Reading</h4>
+            <div class="accessibility-controls">
+              <button class="accessibility-btn toggle-btn" id="readingGuide" aria-pressed="false" aria-label="Toggle reading guide">
+                <span class="btn-icon">📏</span>
+                <span class="btn-text">Reading Guide</span>
+              </button>
+              <button class="accessibility-btn toggle-btn" id="readingMask" aria-pressed="false" aria-label="Toggle reading mask">
+                <span class="btn-icon">🔍</span>
+                <span class="btn-text">Reading Mask</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="accessibility-section">
+            <h4>Audio</h4>
+            <div class="accessibility-controls">
+              <button class="accessibility-btn toggle-btn" id="textToSpeech" aria-pressed="false" aria-label="Toggle text to speech">
+                <span class="btn-icon">🔊</span>
+                <span class="btn-text">Text to Speech</span>
+              </button>
+              <button class="accessibility-btn" id="pauseAllAudio" aria-label="Pause all audio">
+                <span class="btn-icon">⏸️</span>
+                <span class="btn-text">Pause Audio</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="accessibility-section">
+            <button class="accessibility-btn reset-btn" id="resetAll" aria-label="Reset all accessibility settings">
+              <span class="btn-icon">↺</span>
+              <span class="btn-text">Reset All Settings</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reading Guide Line -->
+      <div class="reading-guide" id="readingGuide" style="display: none;"></div>
+      
+      <!-- Reading Mask -->
+      <div class="reading-mask" id="readingMask" style="display: none;">
+        <div class="mask-window"></div>
+      </div>
+
+      <!-- Skip Links -->
+      <div class="skip-links-container" id="skipLinksContainer" style="display: none;">
+        <a href="#main" class="skip-link visible">Skip to main content</a>
+        <a href="#features" class="skip-link visible">Skip to features</a>
+        <a href="#specs" class="skip-link visible">Skip to specifications</a>
+        <a href="#qa" class="skip-link visible">Skip to FAQ</a>
+        <a href="#waitlist" class="skip-link visible">Skip to waitlist</a>
+      </div>
+    `
+  }
+
+  setupAccessibilityFeatures() {
+    setTimeout(() => {
+      this.bindAccessibilityEvents()
+      this.setupKeyboardNavigation()
+      this.setupReadingGuide()
+      this.setupReadingMask()
+      this.setupTextToSpeech()
+    }, 500)
+  }
+
+  initializeAccessibilitySettings() {
+    // Load saved accessibility preferences
+    const settings = this.getAccessibilitySettings()
+    
+    // Apply saved settings
+    if (settings.textSize !== 100) {
+      this.setTextSize(settings.textSize)
+    }
+    if (settings.highContrast) {
+      this.toggleHighContrast(true)
+    }
+    if (settings.largerCursor) {
+      this.toggleLargerCursor(true)
+    }
+    if (settings.reduceMotion) {
+      this.toggleReduceMotion(true)
+    }
+    if (settings.keyboardNavigation) {
+      this.toggleKeyboardNavigation(true)
+    }
+    if (settings.skipLinks) {
+      this.toggleSkipLinks(true)
+    }
+  }
+
+  getAccessibilitySettings() {
+    const defaultSettings = {
+      textSize: 100,
+      highContrast: false,
+      largerCursor: false,
+      reduceMotion: false,
+      keyboardNavigation: false,
+      skipLinks: false,
+      readingGuide: false,
+      readingMask: false,
+      textToSpeech: false
+    }
+    
+    const saved = localStorage.getItem('neurosync-accessibility')
+    return saved ? { ...defaultSettings, ...JSON.parse(saved) } : defaultSettings
+  }
+
+  saveAccessibilitySettings(settings) {
+    localStorage.setItem('neurosync-accessibility', JSON.stringify(settings))
+  }
+
+  bindAccessibilityEvents() {
+    const accessibilityToggle = document.getElementById('accessibilityToggle')
+    const closeAccessibility = document.getElementById('closeAccessibility')
+    const toolbar = document.getElementById('accessibilityToolbar')
+
+    // Toggle toolbar
+    if (accessibilityToggle) {
+      accessibilityToggle.addEventListener('click', () => {
+        const isVisible = toolbar.style.display !== 'none'
+        toolbar.style.display = isVisible ? 'none' : 'block'
+        accessibilityToggle.setAttribute('aria-expanded', !isVisible)
+      })
+    }
+
+    // Close toolbar
+    if (closeAccessibility) {
+      closeAccessibility.addEventListener('click', () => {
+        toolbar.style.display = 'none'
+        accessibilityToggle.setAttribute('aria-expanded', 'false')
+      })
+    }
+
+    // Text size controls
+    document.getElementById('decreaseText')?.addEventListener('click', () => this.adjustTextSize(-10))
+    document.getElementById('increaseText')?.addEventListener('click', () => this.adjustTextSize(10))
+    document.getElementById('resetText')?.addEventListener('click', () => this.setTextSize(100))
+
+    // Visual adjustment toggles
+    document.getElementById('highContrast')?.addEventListener('click', () => this.toggleHighContrast())
+    document.getElementById('largerCursor')?.addEventListener('click', () => this.toggleLargerCursor())
+    document.getElementById('reduceMotion')?.addEventListener('click', () => this.toggleReduceMotion())
+
+    // Navigation toggles
+    document.getElementById('keyboardNavigation')?.addEventListener('click', () => this.toggleKeyboardNavigation())
+    document.getElementById('skipLinks')?.addEventListener('click', () => this.toggleSkipLinks())
+
+    // Reading aids
+    document.getElementById('readingGuide')?.addEventListener('click', () => this.toggleReadingGuide())
+    document.getElementById('readingMask')?.addEventListener('click', () => this.toggleReadingMask())
+
+    // Audio controls
+    document.getElementById('textToSpeech')?.addEventListener('click', () => this.toggleTextToSpeech())
+    document.getElementById('pauseAllAudio')?.addEventListener('click', () => this.pauseAllAudio())
+
+    // Reset all
+    document.getElementById('resetAll')?.addEventListener('click', () => this.resetAllSettings())
+  }
+
+  adjustTextSize(delta) {
+    const settings = this.getAccessibilitySettings()
+    const newSize = Math.max(80, Math.min(150, settings.textSize + delta))
+    this.setTextSize(newSize)
+  }
+
+  setTextSize(size) {
+    document.documentElement.style.setProperty('--accessibility-text-scale', `${size / 100}`)
+    document.body.style.fontSize = `${size}%`
+    
+    const settings = this.getAccessibilitySettings()
+    settings.textSize = size
+    this.saveAccessibilitySettings(settings)
+    
+    const sizeDisplay = document.getElementById('currentTextSize')
+    if (sizeDisplay) sizeDisplay.textContent = `${size}%`
+    
+    this.announceToScreenReader(`Text size set to ${size}%`)
+  }
+
+  toggleHighContrast(force = null) {
+    const settings = this.getAccessibilitySettings()
+    const enabled = force !== null ? force : !settings.highContrast
+    
+    settings.highContrast = enabled
+    this.saveAccessibilitySettings(settings)
+    
+    document.documentElement.classList.toggle('high-contrast', enabled)
+    
+    const button = document.getElementById('highContrast')
+    if (button) {
+      button.setAttribute('aria-pressed', enabled)
+      button.classList.toggle('active', enabled)
+    }
+    
+    this.announceToScreenReader(`High contrast mode ${enabled ? 'enabled' : 'disabled'}`)
+  }
+
+  toggleLargerCursor(force = null) {
+    const settings = this.getAccessibilitySettings()
+    const enabled = force !== null ? force : !settings.largerCursor
+    
+    settings.largerCursor = enabled
+    this.saveAccessibilitySettings(settings)
+    
+    document.documentElement.classList.toggle('larger-cursor', enabled)
+    
+    const button = document.getElementById('largerCursor')
+    if (button) {
+      button.setAttribute('aria-pressed', enabled)
+      button.classList.toggle('active', enabled)
+    }
+    
+    this.announceToScreenReader(`Larger cursor ${enabled ? 'enabled' : 'disabled'}`)
+  }
+
+  toggleReduceMotion(force = null) {
+    const settings = this.getAccessibilitySettings()
+    const enabled = force !== null ? force : !settings.reduceMotion
+    
+    settings.reduceMotion = enabled
+    this.saveAccessibilitySettings(settings)
+    
+    document.documentElement.classList.toggle('reduce-motion', enabled)
+    
+    const button = document.getElementById('reduceMotion')
+    if (button) {
+      button.setAttribute('aria-pressed', enabled)
+      button.classList.toggle('active', enabled)
+    }
+    
+    this.announceToScreenReader(`Reduced motion ${enabled ? 'enabled' : 'disabled'}`)
+  }
+
+  toggleKeyboardNavigation(force = null) {
+    const settings = this.getAccessibilitySettings()
+    const enabled = force !== null ? force : !settings.keyboardNavigation
+    
+    settings.keyboardNavigation = enabled
+    this.saveAccessibilitySettings(settings)
+    
+    document.documentElement.classList.toggle('keyboard-navigation', enabled)
+    
+    const button = document.getElementById('keyboardNavigation')
+    if (button) {
+      button.setAttribute('aria-pressed', enabled)
+      button.classList.toggle('active', enabled)
+    }
+    
+    this.announceToScreenReader(`Keyboard navigation highlights ${enabled ? 'enabled' : 'disabled'}`)
+  }
+
+  toggleSkipLinks(force = null) {
+    const settings = this.getAccessibilitySettings()
+    const enabled = force !== null ? force : !settings.skipLinks
+    
+    settings.skipLinks = enabled
+    this.saveAccessibilitySettings(settings)
+    
+    const container = document.getElementById('skipLinksContainer')
+    if (container) {
+      container.style.display = enabled ? 'block' : 'none'
+    }
+    
+    const button = document.getElementById('skipLinks')
+    if (button) {
+      button.setAttribute('aria-pressed', enabled)
+      button.classList.toggle('active', enabled)
+    }
+    
+    this.announceToScreenReader(`Skip links ${enabled ? 'enabled' : 'disabled'}`)
+  }
+
+  setupKeyboardNavigation() {
+    let currentFocus = -1
+    const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        // Enhanced tab navigation
+        setTimeout(() => {
+          const focused = document.activeElement
+          if (focused) {
+            focused.classList.add('keyboard-focused')
+          }
+        }, 10)
+      }
+      
+      if (e.key === 'Escape') {
+        // Close accessibility toolbar on Escape
+        const toolbar = document.getElementById('accessibilityToolbar')
+        if (toolbar && toolbar.style.display !== 'none') {
+          toolbar.style.display = 'none'
+          document.getElementById('accessibilityToggle')?.focus()
+        }
+      }
+    })
+
+    document.addEventListener('focusout', (e) => {
+      if (e.target) {
+        e.target.classList.remove('keyboard-focused')
+      }
+    })
+  }
+
+  setupReadingGuide() {
+    let guide = null
+    
+    const showGuide = (e) => {
+      if (!guide) guide = document.getElementById('readingGuide')
+      if (guide && guide.style.display !== 'none') {
+        guide.style.top = e.clientY + 'px'
+      }
+    }
+    
+    document.addEventListener('mousemove', showGuide)
+  }
+
+  toggleReadingGuide(force = null) {
+    const settings = this.getAccessibilitySettings()
+    const enabled = force !== null ? force : !settings.readingGuide
+    
+    settings.readingGuide = enabled
+    this.saveAccessibilitySettings(settings)
+    
+    const guide = document.getElementById('readingGuide')
+    if (guide) {
+      guide.style.display = enabled ? 'block' : 'none'
+    }
+    
+    const button = document.getElementById('readingGuide')
+    if (button) {
+      button.setAttribute('aria-pressed', enabled)
+      button.classList.toggle('active', enabled)
+    }
+    
+    this.announceToScreenReader(`Reading guide ${enabled ? 'enabled' : 'disabled'}`)
+  }
+
+  setupReadingMask() {
+    let mask = null
+    let window = null
+    
+    const updateMask = (e) => {
+      if (!mask) mask = document.getElementById('readingMask')
+      if (!window) window = mask?.querySelector('.mask-window')
+      
+      if (mask && window && mask.style.display !== 'none') {
+        const x = e.clientX - 200
+        const y = e.clientY - 100
+        window.style.transform = `translate(${x}px, ${y}px)`
+      }
+    }
+    
+    document.addEventListener('mousemove', updateMask)
+  }
+
+  toggleReadingMask(force = null) {
+    const settings = this.getAccessibilitySettings()
+    const enabled = force !== null ? force : !settings.readingMask
+    
+    settings.readingMask = enabled
+    this.saveAccessibilitySettings(settings)
+    
+    const mask = document.getElementById('readingMask')
+    if (mask) {
+      mask.style.display = enabled ? 'block' : 'none'
+    }
+    
+    const button = document.getElementById('readingMask')
+    if (button) {
+      button.setAttribute('aria-pressed', enabled)
+      button.classList.toggle('active', enabled)
+    }
+    
+    this.announceToScreenReader(`Reading mask ${enabled ? 'enabled' : 'disabled'}`)
+  }
+
+  setupTextToSpeech() {
+    // Text selection speech
+    document.addEventListener('mouseup', () => {
+      const selection = window.getSelection().toString().trim()
+      if (selection && this.getAccessibilitySettings().textToSpeech) {
+        this.speak(selection)
+      }
+    })
+  }
+
+  toggleTextToSpeech(force = null) {
+    const settings = this.getAccessibilitySettings()
+    const enabled = force !== null ? force : !settings.textToSpeech
+    
+    settings.textToSpeech = enabled
+    this.saveAccessibilitySettings(settings)
+    
+    const button = document.getElementById('textToSpeech')
+    if (button) {
+      button.setAttribute('aria-pressed', enabled)
+      button.classList.toggle('active', enabled)
+    }
+    
+    this.announceToScreenReader(`Text to speech ${enabled ? 'enabled' : 'disabled'}`)
+    
+    if (enabled) {
+      this.speak('Text to speech enabled. Select text to hear it read aloud.')
+    }
+  }
+
+  speak(text) {
+    if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel()
+      
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.rate = 0.8
+      utterance.pitch = 1
+      utterance.volume = 0.8
+      
+      window.speechSynthesis.speak(utterance)
+    }
+  }
+
+  pauseAllAudio() {
+    // Pause speech synthesis
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel()
+    }
+    
+    // Pause all audio and video elements
+    document.querySelectorAll('audio, video').forEach(media => {
+      media.pause()
+    })
+    
+    this.announceToScreenReader('All audio paused')
+  }
+
+  resetAllSettings() {
+    if (confirm('Reset all accessibility settings to default?')) {
+      // Clear saved settings
+      localStorage.removeItem('neurosync-accessibility')
+      
+      // Reset DOM
+      document.documentElement.style.removeProperty('--accessibility-text-scale')
+      document.body.style.fontSize = '100%'
+      document.documentElement.classList.remove('high-contrast', 'larger-cursor', 'reduce-motion', 'keyboard-navigation')
+      
+      // Hide elements
+      document.getElementById('readingGuide').style.display = 'none'
+      document.getElementById('readingMask').style.display = 'none'
+      document.getElementById('skipLinksContainer').style.display = 'none'
+      
+      // Reset button states
+      document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.setAttribute('aria-pressed', 'false')
+        btn.classList.remove('active')
+      })
+      
+      // Reset text size display
+      const sizeDisplay = document.getElementById('currentTextSize')
+      if (sizeDisplay) sizeDisplay.textContent = '100%'
+      
+      // Pause speech
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+      }
+      
+      this.announceToScreenReader('All accessibility settings have been reset')
+    }
+  }
+
+  announceToScreenReader(message) {
+    const announcement = document.createElement('div')
+    announcement.setAttribute('aria-live', 'polite')
+    announcement.setAttribute('aria-atomic', 'true')
+    announcement.className = 'sr-only'
+    announcement.textContent = message
+    
+    document.body.appendChild(announcement)
+    
+    setTimeout(() => {
+      document.body.removeChild(announcement)
+    }, 1000)
   }
 }
 
